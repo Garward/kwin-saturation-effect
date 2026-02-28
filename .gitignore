@@ -1,0 +1,12 @@
+build/
+*.so
+*.o
+*.a
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.autogen/
+moc_*.cpp
+qrc_*.cpp
+*_autogen/

@@ -1,0 +1,7 @@
+# SPDX-FileCopyrightText: 2026 Garward
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+File=saturationconfig.kcfg
+ClassName=SaturationSettings
+NameSpace=KWin
+Singleton=true

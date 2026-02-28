@@ -1,0 +1,7 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/effects/saturation">
+        <file>shaders/saturation.frag</file>
+        <file>shaders/saturation_core.frag</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,23 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Garward"
+            }
+        ],
+        "Category": "Appearance",
+        "Description": "Increases color saturation/vibrance for more vivid colors. Similar to NVIDIA Digital Vibrance or AMD Saturation. Works on Wayland and X11.",
+        "EnabledByDefault": false,
+        "Icon": "preferences-desktop-color",
+        "Id": "saturation",
+        "License": "GPL-2.0-or-later",
+        "Name": "Saturation Boost",
+        "Version": "1.0.0",
+        "Website": "https://github.com/garward/kwin-saturation-effect"
+    },
+    "X-KDE-ConfigModule": "kcm_kwin_effects",
+    "org.kde.kwin.effect": {
+        "internal": false,
+        "video": ""
+    }
+}
