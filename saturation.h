@@ -38,8 +38,10 @@ private Q_SLOTS:
 
 private:
     void loadData();
+    void updateShaderUniforms();
 
-    float m_saturation = 2.0f; // 200% saturation (like nvibrant 1023)
+    float m_saturation = 1.5f;
+    int m_mode = 0;  // 0 = AMD (linear), 1 = NVIDIA (non-linear)
 
     std::unordered_set<KWin::EffectWindow *> m_windows;
     std::unique_ptr<GLShader> m_shader;

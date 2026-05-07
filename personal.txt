@@ -1,0 +1,7 @@
+
+● Done! Created:
+
+  - Release tarball: /home/garward/kwin-saturation-effect-1.0.0.tar.gz (4.9K)
+  - GitHub Release: https://github.com/Garward/kwin-saturation-effect/releases/tag/v1.0.0
+
+  Now you can submit to the KDE Store at https://store.kde.org/. When uploading, you can either use the local tarball or link directly to the GitHub release.

@@ -7,10 +7,12 @@
 */
 
 #include "saturation.h"
-#include "saturationconfig.h"
 
 #include "effect/effecthandler.h"
 #include "opengl/glshader.h"
+
+#include <KConfig>
+#include <KConfigGroup>
 
 static void ensureResources()
 {
@@ -23,8 +25,11 @@ namespace KWin
 SaturationEffect::SaturationEffect()
     : OffscreenEffect()
 {
-    SaturationSettings::instance(effects->config());
-    m_saturation = std::clamp<float>(SaturationSettings::saturation(), 0.0f, 4.0f);
+    KConfig config(QStringLiteral("kwinrc"));
+    KConfigGroup group = config.group(QStringLiteral("Effect-saturation"));
+    int saturationPercent = group.readEntry("Saturation", 150);
+    m_saturation = std::clamp<float>(saturationPercent / 100.0f, 0.0f, 4.0f);
+    m_mode = group.readEntry("Mode", 0);
 
     loadData();
 }
@@ -53,8 +58,7 @@ void SaturationEffect::loadData()
         return;
     }
 
-    ShaderBinder binder{m_shader.get()};
-    m_shader->setUniform("saturationAmount", m_saturation);
+    updateShaderUniforms();
 
     for (const auto windows = effects->stackingOrder(); EffectWindow *w : windows) {
         applyToWindow(w);
@@ -90,32 +94,44 @@ bool SaturationEffect::isActive() const
 
 void SaturationEffect::reconfigure(ReconfigureFlags flags)
 {
-    if (flags != Effect::ReconfigureAll) {
-        return;
-    }
+    Q_UNUSED(flags)
 
-    SaturationSettings::self()->read();
-    const auto newSaturation = std::clamp<float>(SaturationSettings::saturation(), 0.0f, 4.0f);
-    if (qFuzzyCompare(m_saturation, newSaturation)) {
-        return;
-    }
+    KConfig config(QStringLiteral("kwinrc"));
+    KConfigGroup group = config.group(QStringLiteral("Effect-saturation"));
+    int saturationPercent = group.readEntry("Saturation", 150);
+    m_saturation = std::clamp<float>(saturationPercent / 100.0f, 0.0f, 4.0f);
+    m_mode = group.readEntry("Mode", 0);
 
-    m_saturation = newSaturation;
+    // Update shader uniforms
+    updateShaderUniforms();
 
-    disconnect(effects, &EffectsHandler::windowDeleted, this, &SaturationEffect::slotWindowDeleted);
-    disconnect(effects, &EffectsHandler::windowAdded, this, &SaturationEffect::applyToWindow);
-
+    // Force re-redirect all windows to apply the new shader uniform
     for (EffectWindow *w : m_windows) {
         unredirect(w);
     }
     m_windows.clear();
 
-    loadData();
+    for (EffectWindow *w : effects->stackingOrder()) {
+        redirect(w);
+        setShader(w, m_shader.get());
+        m_windows.insert(w);
+    }
+
+    effects->addRepaintFull();
 }
 
 int SaturationEffect::requestedEffectChainPosition() const
 {
     return 98;
+}
+
+void SaturationEffect::updateShaderUniforms()
+{
+    if (m_shader && m_shader->isValid()) {
+        ShaderBinder binder{m_shader.get()};
+        m_shader->setUniform("saturationAmount", m_saturation);
+        m_shader->setUniform("mode", m_mode);
+    }
 }
 
 } // namespace KWin
