@@ -1,8 +1,9 @@
-// Saturation shader - direct formula implementation (legacy)
+// Saturation shader - AMD linear and NVIDIA vibrance modes (legacy GLSL)
 
 uniform sampler2D sampler;
 uniform vec4 modulation;
 uniform float saturationAmount;  // 1.0 = normal, 1.5 = 150%, 2.0 = 200%
+uniform int mode;                // 0 = AMD (linear), 1 = NVIDIA (non-linear vibrance)
 varying vec2 texcoord0;
 
 // BT.709 luminance coefficients (for linear RGB)
@@ -30,6 +31,29 @@ vec3 linearToSrgb(vec3 color) {
     );
 }
 
+// AMD-style linear saturation
+vec3 amdSaturation(vec3 color, float amount) {
+    float luma = dot(color, lumaCoeff);
+    return vec3(luma) + amount * (color - vec3(luma));
+}
+
+// NVIDIA-style non-linear vibrance
+// Boosts less saturated colors more, leaves already saturated colors alone
+vec3 nvidiaVibrance(vec3 color, float amount) {
+    float luma = dot(color, lumaCoeff);
+
+    // Calculate current saturation (0 = gray, 1 = fully saturated)
+    float maxC = max(max(color.r, color.g), color.b);
+    float minC = min(min(color.r, color.g), color.b);
+    float currentSat = (maxC - minC) / max(maxC, 0.001);
+
+    // Non-linear adjustment: less saturated colors get boosted more
+    // The (1 - currentSat) factor reduces the effect on already saturated colors
+    float adjustedAmount = 1.0 + (amount - 1.0) * (1.0 - currentSat * 0.5);
+
+    return vec3(luma) + adjustedAmount * (color - vec3(luma));
+}
+
 void main()
 {
     vec4 tex = texture2D(sampler, texcoord0);
@@ -41,11 +65,13 @@ void main()
     // Convert sRGB to linear for proper color math
     vec3 linear = srgbToLinear(tex.rgb);
 
-    // Calculate luminance
-    float luma = dot(linear, lumaCoeff);
-
-    // Apply saturation: output = luma + S * (input - luma)
-    vec3 saturated = vec3(luma) + saturationAmount * (linear - vec3(luma));
+    // Apply saturation based on mode
+    vec3 saturated;
+    if (mode == 1) {
+        saturated = nvidiaVibrance(linear, saturationAmount);
+    } else {
+        saturated = amdSaturation(linear, saturationAmount);
+    }
 
     // Clamp to valid range
     saturated = clamp(saturated, 0.0, 1.0);

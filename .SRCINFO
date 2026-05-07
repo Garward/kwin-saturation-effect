@@ -1,0 +1,18 @@
+pkgbase = kwin-effect-saturation-git
+	pkgdesc = KWin effect that increases color saturation/vibrance for more vivid colors
+	pkgver = 1.0.0.r0.g4db53ea
+	pkgrel = 1
+	url = https://github.com/Garward/kwin-saturation-effect
+	arch = x86_64
+	license = GPL-2.0-or-later
+	makedepends = git
+	makedepends = cmake
+	makedepends = extra-cmake-modules
+	makedepends = kcmutils
+	depends = kwin
+	provides = kwin-effect-saturation
+	conflicts = kwin-effect-saturation
+	source = git+https://github.com/Garward/kwin-saturation-effect.git
+	sha256sums = SKIP
+
+pkgname = kwin-effect-saturation-git

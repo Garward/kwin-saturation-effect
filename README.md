@@ -20,25 +20,26 @@ A KWin desktop effect that increases color saturation/vibrance for more vivid co
 
 #### Dependencies
 
-- KDE Frameworks 6
-- KWin development headers
-- CMake 3.20+
-- Qt 6
+Requires KDE Plasma 6 with KWin 6, KDE Frameworks 6, Qt 6, and CMake 3.20+.
 
-On Arch Linux:
-```bash
-sudo pacman -S cmake extra-cmake-modules kwin
-```
+- Arch:
+  ```bash
+  sudo pacman -S --needed git gcc cmake extra-cmake-modules kwin kcmutils ki18n qt6-base
+  ```
+- Debian / Ubuntu (Plasma 6):
+  ```bash
+  sudo apt install git g++ cmake extra-cmake-modules kwin-dev libkf6kcmutils-dev libkf6i18n-dev libkf6config-dev qt6-base-dev gettext
+  ```
+- Fedora (Plasma 6):
+  ```bash
+  sudo dnf install git gcc-c++ cmake extra-cmake-modules kwin-devel kf6-kcmutils-devel kf6-ki18n-devel kf6-kconfig-devel qt6-qtbase-devel
+  ```
+- openSUSE Tumbleweed:
+  ```bash
+  sudo zypper in git gcc-c++ cmake extra-cmake-modules kwin6-devel kf6-kcmutils-devel kf6-ki18n-devel kf6-kconfig-devel qt6-base-devel
+  ```
 
-On Fedora:
-```bash
-sudo dnf install cmake extra-cmake-modules kwin-devel
-```
-
-On Ubuntu/Debian (KDE Neon):
-```bash
-sudo apt install cmake extra-cmake-modules kwin-dev
-```
+> ECM 6.0+ is required. On older distros where the system-wide `extra-cmake-modules` is still 5.x, install the KDE 6 dev packages above before running `cmake`.
 
 #### Build & Install
 
@@ -76,6 +77,14 @@ After changing the config, reload KWin:
 ```bash
 qdbus6 org.kde.KWin /KWin reconfigure
 ```
+
+## Troubleshooting
+
+**Effect doesn't appear in System Settings**
+Log out and back in — KWin only scans for new effects at session start. Confirm the `.so` landed in the right plugin dir for your distro (typically `/usr/lib/qt6/plugins/kwin/effects/plugins/` on Arch/Debian or `/usr/lib64/qt6/plugins/kwin/effects/plugins/` on Fedora/openSUSE).
+
+**Build installs to `/usr/lib/qt5/...` instead of qt6**
+Your system has both Qt5 and Qt6 ECM modules and CMake picked the older one. Make sure the KDE 6 dev packages above are installed; the build pins ECM to 6.0+ to avoid this.
 
 ## Why This Effect?
 
