@@ -1,6 +1,6 @@
 # Maintainer: Garward <your-email@example.com>
 pkgname=kwin-effect-saturation-git
-pkgver=1.0.0.r0.g4db53ea
+pkgver=1.1.0.r0.g0000000
 pkgrel=1
 pkgdesc="KWin effect that increases color saturation/vibrance for more vivid colors"
 arch=('x86_64')
@@ -16,7 +16,7 @@ sha256sums=('SKIP')
 pkgver() {
     cd kwin-saturation-effect
     git describe --long --tags 2>/dev/null | sed 's/^v//;s/\([^-]*-g\)/r\1/;s/-/./g' ||
-    printf "1.0.0.r%s.g%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
+    printf "1.1.0.r%s.g%s" "$(git rev-list --count HEAD)" "$(git rev-parse --short HEAD)"
 }
 
 build() {

@@ -1,12 +1,40 @@
+# Build output
 build/
+build-*/
 *.so
 *.o
 *.a
 CMakeCache.txt
 CMakeFiles/
 cmake_install.cmake
+install_manifest.txt
 Makefile
 *.autogen/
 moc_*.cpp
 qrc_*.cpp
+ui_*.h
 *_autogen/
+
+# Release artifacts
+*.tar.gz
+*.tar.xz
+*.zip
+pkg/
+src/
+
+# Editor / IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.cache/
+
+# Tooling / agents
+.claude/
+
+# Local scratch
+personal.txt
+notes.txt
+TODO.local
+*.local
