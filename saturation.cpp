@@ -22,6 +22,23 @@ static void ensureResources()
 namespace KWin
 {
 
+namespace
+{
+
+template<typename Shader>
+bool isShaderUsable(const std::unique_ptr<Shader> &shader)
+{
+    if (!shader) {
+        return false;
+    }
+    if constexpr (requires(const Shader &candidate) { candidate.isValid(); }) {
+        return shader->isValid();
+    }
+    return true;
+}
+
+}
+
 SaturationEffect::SaturationEffect()
     : OffscreenEffect()
 {
@@ -53,7 +70,7 @@ void SaturationEffect::loadData()
         QStringLiteral(":/effects/saturation/shaders/saturation.frag")
     );
 
-    if (!m_shader->isValid()) {
+    if (!isShaderUsable(m_shader)) {
         qWarning() << "SaturationEffect: Failed to load shader!";
         return;
     }
@@ -127,7 +144,7 @@ int SaturationEffect::requestedEffectChainPosition() const
 
 void SaturationEffect::updateShaderUniforms()
 {
-    if (m_shader && m_shader->isValid()) {
+    if (isShaderUsable(m_shader)) {
         ShaderBinder binder{m_shader.get()};
         m_shader->setUniform("saturationAmount", m_saturation);
         m_shader->setUniform("mode", m_mode);
